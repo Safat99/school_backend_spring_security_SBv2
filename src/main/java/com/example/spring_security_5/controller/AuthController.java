@@ -7,12 +7,11 @@ import com.example.spring_security_5.dto.response.SignUpResponse;
 import com.example.spring_security_5.entity.User;
 import com.example.spring_security_5.repository.UserRepository;
 import com.example.spring_security_5.service.UserService;
-import com.fasterxml.jackson.databind.JsonSerializer;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -34,11 +33,12 @@ public class AuthController implements Auth {
         User user = userRepository.findByEmail(request.getEmail());
 
         if (user != null) {
-            throw new UsernameNotFoundException("Already a user");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(SignUpResponse.builder().message("Error! Already a user found").build());
         }
 
         // encoding password
         String encodedPassword = bCryptPasswordEncoder.encode(request.getPassword());
+
         // Create a new user using the signUpService implementation
         userService.createUser(
                     User.builder()
