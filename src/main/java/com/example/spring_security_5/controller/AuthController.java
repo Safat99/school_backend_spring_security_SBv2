@@ -6,11 +6,16 @@ import com.example.spring_security_5.dto.response.LoginResponse;
 import com.example.spring_security_5.dto.response.SignUpResponse;
 import com.example.spring_security_5.entity.User;
 import com.example.spring_security_5.repository.UserRepository;
+import com.example.spring_security_5.service.JwtTokenProvider;
+import com.example.spring_security_5.service.UserDetailsServiceImpl;
 import com.example.spring_security_5.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -25,6 +30,12 @@ public class AuthController implements Auth {
 
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
+
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private JwtTokenProvider jwtTokenProvider;
 
     @Override
     public ResponseEntity<SignUpResponse> signUp(SignUpRequest request) {
@@ -57,6 +68,22 @@ public class AuthController implements Auth {
 
     @Override
     public ResponseEntity<LoginResponse> login(LoginRequest request) {
-        return null;
+
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        request.getEmail(),
+                        request.getPassword()
+                )
+        );
+
+        // after authentication successful, creating jwt token
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        String jwtToken = jwtTokenProvider.generateToken(authentication);
+
+        return ResponseEntity.ok(LoginResponse.builder()
+                        .token(jwtToken)
+                        .build()
+                );
+
     }
 }
