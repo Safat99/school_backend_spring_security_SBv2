@@ -26,4 +26,5 @@ public class User {
     private Roles role;
 
     private String extra_info;
+    private String Designation;
 }

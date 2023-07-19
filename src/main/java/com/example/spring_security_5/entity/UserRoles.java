@@ -9,7 +9,6 @@ import javax.persistence.*;
 @Entity
 @RequiredArgsConstructor
 @Data
-@Builder
 public class UserRoles {
 
     @Id
