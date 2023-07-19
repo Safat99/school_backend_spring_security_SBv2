@@ -3,6 +3,7 @@ package com.example.spring_security_5.service;
 import com.example.spring_security_5.entity.User;
 import com.example.spring_security_5.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
@@ -13,19 +14,23 @@ public class UserService {
     private final UserRepository userRepository;
 
     @Autowired
-    public UserService(UserRepository personalInfoRepository) {
-        this.userRepository = personalInfoRepository;
+    public UserService(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
-    public User createUser(User personalInfo) {
-        return userRepository.save(personalInfo);
+    @PreAuthorize("hasRole('ADMIN')")
+    public User createUser(User user) {
+        return userRepository.save(user);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     public User getUser(Long uid) {
         return userRepository.findById(uid)
                 .orElseThrow(() -> new EntityNotFoundException("User with UID " + uid + " not found."));
     }
 
+
+    @PreAuthorize("hasRole('ADMIN') or (hasRole('USER') and #user.email == principal.email)" )
     public User updateUser(Long uid, User updatedInfo) {
         User existingInfo = getUser(uid);
         existingInfo.setEmail(updatedInfo.getEmail());
@@ -36,6 +41,7 @@ public class UserService {
         return userRepository.save(existingInfo);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     public void deleteUser(Long uid) {
         userRepository.deleteById(uid);
     }
