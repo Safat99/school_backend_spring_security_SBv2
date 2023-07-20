@@ -16,6 +16,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -78,6 +79,7 @@ public class AuthController implements Auth {
 
         // after authentication successful, creating jwt token
         SecurityContextHolder.getContext().setAuthentication(authentication);
+//        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         String jwtToken = jwtTokenProvider.generateToken(authentication);
 
         return ResponseEntity.ok(LoginResponse.builder()
