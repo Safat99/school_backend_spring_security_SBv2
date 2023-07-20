@@ -39,7 +39,7 @@ public class UserController {
 
     @PutMapping("/updateRole/{uid}")
     public ResponseEntity<User> updateRole(@PathVariable Long uid, @RequestBody UpdateUserRoleRequest roleRequest) {
-        User updatedInfo = userService.updateUser(uid, roleRequest);
+        User updatedInfo = userService.updateRole(uid, roleRequest.getNewRole());
         return ResponseEntity.ok(updatedInfo);
     }
 
