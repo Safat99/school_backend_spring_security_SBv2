@@ -1,5 +1,6 @@
 package com.example.spring_security_5.controller;
 
+import com.example.spring_security_5.dto.request.UpdateUserRoleRequest;
 import com.example.spring_security_5.entity.User;
 import com.example.spring_security_5.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +36,13 @@ public class UserController {
         User updatedInfo = userService.updateUser(uid, personalInfo);
         return ResponseEntity.ok(updatedInfo);
     }
+
+    @PutMapping("/updateRole/{uid}")
+    public ResponseEntity<User> updateRole(@PathVariable Long uid, @RequestBody UpdateUserRoleRequest roleRequest) {
+        User updatedInfo = userService.updateUser(uid, roleRequest);
+        return ResponseEntity.ok(updatedInfo);
+    }
+
 
     @DeleteMapping("/{uid}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long uid) {

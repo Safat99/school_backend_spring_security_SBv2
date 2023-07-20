@@ -1,5 +1,6 @@
 package com.example.spring_security_5.service;
 
+import com.example.spring_security_5.entity.Roles;
 import com.example.spring_security_5.entity.User;
 import com.example.spring_security_5.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +41,15 @@ public class UserService {
 
         return userRepository.save(existingInfo);
     }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    public User updateRole(Long uid, Roles role) {
+        User user = getUser(uid);
+        user.setRole(role);
+
+        return userRepository.save(user);
+    }
+
 
     @PreAuthorize("hasRole('ADMIN')")
     public void deleteUser(Long uid) {
